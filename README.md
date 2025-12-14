@@ -1,3 +1,8 @@
 # Interactive 3D Virtual Aquarium
 
-A Three.js project to build an interactive 3D aquarium with fish, bubbles, and UI.
+## Project Structure
+- `index.html` → Entry point
+- `src/css/` → Stylesheets
+- `src/js/` → JavaScript modules
+- `assets/textures/` → Images and textures
+- `assets/models/` → 3D models
