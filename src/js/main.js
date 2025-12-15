@@ -11,7 +11,17 @@ import { createRock, createCoral } from './decorFactory.js';
 function updateFish(fish) {
   fish.position.add(fish.userData.velocity);
 
-  // Rotate fish in movement direction
+  const halfW = AQUARIUM.width / 2;
+  const halfH = AQUARIUM.height / 2;
+  const halfD = AQUARIUM.depth / 2;
+
+  ['x', 'y', 'z'].forEach(axis => {
+    if (fish.position[axis] > (axis === 'y' ? halfH : axis === 'x' ? halfW : halfD) ||
+        fish.position[axis] < -(axis === 'y' ? halfH : axis === 'x' ? halfW : halfD)) {
+      fish.userData.velocity[axis] *= -1;
+    }
+  });
+
   const dir = fish.userData.velocity.clone().normalize();
   fish.rotation.y = Math.atan2(-dir.z, dir.x);
 }
