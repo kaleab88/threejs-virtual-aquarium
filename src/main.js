@@ -61,5 +61,52 @@ function addBasicLights() {
 
 addBasicLights();
 
+function createAquariumWalls() {
+  const material = new THREE.MeshStandardMaterial({
+    color: 0x1e90ff,
+    transparent: true,
+    opacity: 0.15,
+    roughness: 0.1,
+    metalness: 0.0,
+    side: THREE.DoubleSide
+  });
+
+  const walls = [];
+
+  // Front & Back
+  const fbGeometry = new THREE.PlaneGeometry(
+    AQUARIUM.width,
+    AQUARIUM.height
+  );
+
+  const front = new THREE.Mesh(fbGeometry, material);
+  front.position.z = AQUARIUM.depth / 2;
+  front.position.y = 0;
+
+  const back = front.clone();
+  back.position.z = -AQUARIUM.depth / 2;
+  back.rotation.y = Math.PI;
+
+  // Left & Right
+  const lrGeometry = new THREE.PlaneGeometry(
+    AQUARIUM.depth,
+    AQUARIUM.height
+  );
+
+  const left = new THREE.Mesh(lrGeometry, material);
+  left.position.x = -AQUARIUM.width / 2;
+  left.rotation.y = Math.PI / 2;
+
+  const right = left.clone();
+  right.position.x = AQUARIUM.width / 2;
+  right.rotation.y = -Math.PI / 2;
+
+  walls.push(front, back, left, right);
+  return walls;
+}
+
+const walls = createAquariumWalls();
+walls.forEach(wall => scene.add(wall));
+
 setupResize(camera, renderer);
 startLoop(renderer, scene, camera, () => controls.update());
