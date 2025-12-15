@@ -40,6 +40,9 @@ const renderer = createRenderer();
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+camera.position.set(0, 2, 12);
+controls.target.set(0, 0, 0);
+controls.update();
 
 const cube = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1, 1),
