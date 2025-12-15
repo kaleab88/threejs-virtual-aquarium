@@ -8,6 +8,11 @@ import { setupResize } from "../utils/resize.js";
 import { createFish } from './fishFactory.js';
 import { createRock, createCoral } from './decorFactory.js';
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let selectedFish = null;
+
+
 function updateFish(fish) {
   fish.position.add(fish.userData.velocity);
 
