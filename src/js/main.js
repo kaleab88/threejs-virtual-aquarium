@@ -190,6 +190,15 @@ window.addEventListener('click', (event) => {
   }
 });
 
+function updateInfoPanel(fish) {
+document.getElementById('fish-name').textContent = 'Fish';
+document.getElementById('fish-color').textContent = fish.children[0].material.color.getHexString();
+document.getElementById('fish-speed').textContent = fish.userData.speed.toFixed(2);
+
+
+document.getElementById('info-panel').classList.remove('hidden');
+}
+
 function selectFish(fish) {
 clearSelection();
 selectedFish = fish;
