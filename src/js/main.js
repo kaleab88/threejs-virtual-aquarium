@@ -175,6 +175,26 @@ scene.add(decorGroup);
 
 setupResize(camera, renderer);
 
+window.addEventListener('click', (event) => {
+mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+
+raycaster.setFromCamera(mouse, camera);
+
+
+const intersects = raycaster.intersectObjects(fishGroup.children, true);
+
+
+if (intersects.length > 0) {
+selectFish(intersects[0].object.parent);
+} else {
+clearSelection();
+}
+});
+
+
+
 function animate() {
   requestAnimationFrame(animate);
 
