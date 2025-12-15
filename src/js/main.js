@@ -20,6 +20,17 @@ const AQUARIUM = {
 
 const scene = createScene();
 
+const fishGroup = new THREE.Group();
+
+const fish1 = createFish({ color: 0x4da6ff, scale: 1 });
+fish1.position.set(0, 0, 0);
+
+const fish2 = createFish({ color: 0xffcc00, scale: 0.8 });
+fish2.position.set(2, 1, -1);
+
+fishGroup.add(fish1, fish2);
+scene.add(fishGroup);
+
 function createAquariumFloor() {
   const geometry = new THREE.PlaneGeometry(
     AQUARIUM.width,
