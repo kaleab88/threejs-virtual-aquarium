@@ -16,9 +16,17 @@ function updateFish(fish) {
   const halfD = AQUARIUM.depth / 2;
 
   ['x', 'y', 'z'].forEach(axis => {
-    if (fish.position[axis] > (axis === 'y' ? halfH : axis === 'x' ? halfW : halfD) ||
-        fish.position[axis] < -(axis === 'y' ? halfH : axis === 'x' ? halfW : halfD)) {
-      fish.userData.velocity[axis] *= -1;
+    if (axis === 'y') {
+      const minY = -AQUARIUM.height / 2 + 0.5;
+      const maxY = AQUARIUM.height / 2 - 0.5;
+      if (fish.position.y < minY || fish.position.y > maxY) {
+        fish.userData.velocity.y *= -1;
+      }
+    } else {
+      const limit = axis === 'x' ? halfW : halfD;
+      if (fish.position[axis] > limit || fish.position[axis] < -limit) {
+        fish.userData.velocity[axis] *= -1;
+      }
     }
   });
 
