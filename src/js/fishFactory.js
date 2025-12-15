@@ -20,5 +20,14 @@ export function createFish({ color = 0x4da6ff, scale = 1 }) {
 
   group.scale.set(scale, scale, scale);
 
+  group.userData = {
+    velocity: new THREE.Vector3(
+      (Math.random() - 0.5) * 0.02,
+      (Math.random() - 0.5) * 0.01,
+      (Math.random() - 0.5) * 0.02
+    ),
+    speed: 1
+  };
+
   return group;
 }
