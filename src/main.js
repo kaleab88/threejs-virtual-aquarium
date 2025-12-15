@@ -15,6 +15,26 @@ const AQUARIUM = {
 };
 
 const scene = createScene();
+
+function createAquariumFloor() {
+  const geometry = new THREE.PlaneGeometry(
+    AQUARIUM.width,
+    AQUARIUM.depth
+  );
+
+  const material = new THREE.MeshStandardMaterial({
+    color: 0x2e8b57, // muted green
+    roughness: 0.9,
+    metalness: 0.0
+  });
+
+  const floor = new THREE.Mesh(geometry, material);
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -AQUARIUM.height / 2;
+
+  return floor;
+}
+
 const camera = createCamera();
 const renderer = createRenderer();
 
@@ -26,6 +46,9 @@ const cube = new THREE.Mesh(
   new THREE.MeshStandardMaterial({ color: 0xcccccc })
 );
 scene.add(cube);
+
+const floor = createAquariumFloor();
+scene.add(floor);
 
 scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
