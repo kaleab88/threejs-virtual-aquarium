@@ -153,4 +153,14 @@ decorGroup.add(createCoral(new THREE.Vector3(0, -2.8, -3)));
 scene.add(decorGroup);
 
 setupResize(camera, renderer);
-startLoop(renderer, scene, camera, () => controls.update());
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  fishGroup.children.forEach(updateFish);
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+animate();
