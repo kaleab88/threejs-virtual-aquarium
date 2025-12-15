@@ -62,6 +62,14 @@ fish2.position.set(2, 1, -1);
 fishGroup.add(fish1, fish2);
 scene.add(fishGroup);
 
+fishGroup.children.forEach(fish => {
+fish.traverse(child => {
+if (child.isMesh) child.userData.selectable = true;
+});
+});
+
+
+
 function createAquariumFloor() {
   const geometry = new THREE.PlaneGeometry(
     AQUARIUM.width,
