@@ -126,5 +126,13 @@ function createAquariumWalls() {
 const walls = createAquariumWalls();
 walls.forEach(wall => scene.add(wall));
 
+const decorGroup = new THREE.Group();
+
+decorGroup.add(createRock(new THREE.Vector3(-3, -2.8, 1)));
+decorGroup.add(createRock(new THREE.Vector3(3, -2.8, -2)));
+decorGroup.add(createCoral(new THREE.Vector3(0, -2.8, -3)));
+
+scene.add(decorGroup);
+
 setupResize(camera, renderer);
 startLoop(renderer, scene, camera, () => controls.update());
