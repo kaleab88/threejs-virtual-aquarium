@@ -8,6 +8,14 @@ import { setupResize } from "../utils/resize.js";
 import { createFish } from './fishFactory.js';
 import { createRock, createCoral } from './decorFactory.js';
 
+function updateFish(fish) {
+  fish.position.add(fish.userData.velocity);
+
+  // Rotate fish in movement direction
+  const dir = fish.userData.velocity.clone().normalize();
+  fish.rotation.y = Math.atan2(-dir.z, dir.x);
+}
+
 console.log('Main script loaded');
 
 // Aquarium dimensions (world units)
