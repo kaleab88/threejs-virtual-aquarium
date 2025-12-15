@@ -1,10 +1,12 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+import * as THREE from "../lib/three.module.js";
+import { OrbitControls } from "../lib/OrbitControls.js";
 import { createScene } from "./core/scene.js";
 import { createCamera } from "./core/camera.js";
 import { createRenderer } from "./core/renderer.js";
 import { startLoop } from "./core/loop.js";
 import { setupResize } from "./utils/resize.js";
+
+console.log('Main script loaded');
 
 // Aquarium dimensions (world units)
 const AQUARIUM = {
@@ -40,7 +42,7 @@ const renderer = createRenderer();
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-camera.position.set(0, 2, 12);
+camera.position.set(0, 3, 12);
 controls.target.set(0, 0, 0);
 controls.update();
 
@@ -68,7 +70,7 @@ function createAquariumWalls() {
   const material = new THREE.MeshStandardMaterial({
     color: 0x1e90ff,
     transparent: true,
-    opacity: 0.15,
+    opacity: 0.3,
     roughness: 0.1,
     metalness: 0.0,
     side: THREE.DoubleSide
