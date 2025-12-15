@@ -6,6 +6,14 @@ import { createRenderer } from "./core/renderer.js";
 import { startLoop } from "./core/loop.js";
 import { setupResize } from "./utils/resize.js";
 
+// Aquarium dimensions (world units)
+const AQUARIUM = {
+  width: 10,
+  height: 6,
+  depth: 6,
+  wallThickness: 0.1
+};
+
 const scene = createScene();
 const camera = createCamera();
 const renderer = createRenderer();
