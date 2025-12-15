@@ -176,22 +176,46 @@ scene.add(decorGroup);
 setupResize(camera, renderer);
 
 window.addEventListener('click', (event) => {
-mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+  raycaster.setFromCamera(mouse, camera);
 
-raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(fishGroup.children, true);
 
-
-const intersects = raycaster.intersectObjects(fishGroup.children, true);
-
-
-if (intersects.length > 0) {
-selectFish(intersects[0].object.parent);
-} else {
-clearSelection();
-}
+  if (intersects.length > 0) {
+    selectFish(intersects[0].object.parent);
+  } else {
+    clearSelection();
+  }
 });
+
+function selectFish(fish) {
+clearSelection();
+selectedFish = fish;
+
+
+fish.traverse(child => {
+if (child.isMesh) child.material.emissive.setHex(0x333333);
+});
+
+
+updateInfoPanel(fish);
+}
+
+
+function clearSelection() {
+if (!selectedFish) return;
+
+
+selectedFish.traverse(child => {
+if (child.isMesh) child.material.emissive.setHex(0x000000);
+});
+
+
+selectedFish = null;
+document.getElementById('info-panel').classList.add('hidden');
+}
 
 
 
