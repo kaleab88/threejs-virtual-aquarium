@@ -94,6 +94,13 @@ function createAquariumFloor() {
 const camera = createCamera();
 const renderer = createRenderer();
 
+// Renderer performance & color management
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.physicallyCorrectLights = true;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+
+
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 camera.position.set(0, 3, 12);
