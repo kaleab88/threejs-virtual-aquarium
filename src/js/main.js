@@ -108,15 +108,20 @@ const floor = createAquariumFloor();
 scene.add(floor);
 
 function addBasicLights() {
-  const ambient = new THREE.AmbientLight(0xffffff, 0.4);
-  scene.add(ambient);
+  const ambientLight = new THREE.AmbientLight(0x1e3a5f, 0.4);
+  scene.add(ambientLight);
 
-  const directional = new THREE.DirectionalLight(0xffffff, 0.8);
-  directional.position.set(5, 10, 5);
-  scene.add(directional);
+  const topLight = new THREE.DirectionalLight(0x88ccee, 1.0);
+  topLight.position.set(0, 10, 0);
+  scene.add(topLight);
+
+  const sideLight = new THREE.DirectionalLight(0x336699, 0.3);
+  sideLight.position.set(-5, 3, 2);
+  scene.add(sideLight);
 }
 
 addBasicLights();
+
 
 function createAquariumWalls() {
   const material = new THREE.MeshStandardMaterial({
