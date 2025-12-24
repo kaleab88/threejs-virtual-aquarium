@@ -1,3 +1,5 @@
+// ============================= // Imports // =============================
+
 import * as THREE from "../../lib/three.module.js";
 import { OrbitControls } from "../../lib/OrbitControls.js";
 import { createScene } from "../core/scene.js";
@@ -14,32 +16,51 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let selectedFish = null;
 
-
 function updateFish(fish, delta) {
-  // Move based on delta (units per second)
-  fish.position.addScaledVector(fish.userData.velocity, delta);
+  const speedMultiplier = 50;
+  fish.position.addScaledVector(fish.userData.velocity, delta * speedMultiplier);
 
   const halfW = AQUARIUM.width / 2;
   const halfH = AQUARIUM.height / 2;
   const halfD = AQUARIUM.depth / 2;
 
-  ['x', 'y', 'z'].forEach(axis => {
-    if (axis === 'y') {
-      const minY = -AQUARIUM.height / 2 + 0.5;
-      const maxY = AQUARIUM.height / 2 - 0.5;
-      if (fish.position.y < minY || fish.position.y > maxY) {
-        fish.userData.velocity.y *= -1;
-      }
-    } else {
-      const limit = axis === 'x' ? halfW : halfD;
-      if (fish.position[axis] > limit || fish.position[axis] < -limit) {
-        fish.userData.velocity[axis] *= -1;
-      }
-    }
-  });
+  // Estimate fish half-size (adjust if needed)
+  const margin = 0.5; // half the fish body length
 
+  const minY = -halfH + margin;
+  const maxY = halfH - margin;
+
+  if (fish.position.y < minY) {
+    fish.position.y = minY;
+    fish.userData.velocity.y *= -1;
+  }
+  if (fish.position.y > maxY) {
+    fish.position.y = maxY;
+    fish.userData.velocity.y *= -1;
+  }
+
+  if (fish.position.x > halfW - margin) {
+    fish.position.x = halfW - margin;
+    fish.userData.velocity.x *= -1;
+  }
+  if (fish.position.x < -halfW + margin) {
+    fish.position.x = -halfW + margin;
+    fish.userData.velocity.x *= -1;
+  }
+
+  if (fish.position.z > halfD - margin) {
+    fish.position.z = halfD - margin;
+    fish.userData.velocity.z *= -1;
+  }
+  if (fish.position.z < -halfD + margin) {
+    fish.position.z = -halfD + margin;
+    fish.userData.velocity.z *= -1;
+  }
+
+  // Smooth rotation
   const dir = fish.userData.velocity.clone().normalize();
-  fish.rotation.y = Math.atan2(-dir.z, dir.x);
+  const targetAngle = Math.atan2(-dir.z, dir.x);
+  fish.rotation.y += (targetAngle - fish.rotation.y) * 0.1;
 }
 
 
