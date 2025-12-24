@@ -15,8 +15,9 @@ const mouse = new THREE.Vector2();
 let selectedFish = null;
 
 
-function updateFish(fish) {
-  fish.position.add(fish.userData.velocity);
+function updateFish(fish, delta) {
+  // Move based on delta (units per second)
+  fish.position.addScaledVector(fish.userData.velocity, delta);
 
   const halfW = AQUARIUM.width / 2;
   const halfH = AQUARIUM.height / 2;
@@ -41,6 +42,7 @@ function updateFish(fish) {
   fish.rotation.y = Math.atan2(-dir.z, dir.x);
 }
 
+
 console.log('Main script loaded');
 
 // Aquarium dimensions (world units)
@@ -52,6 +54,8 @@ const AQUARIUM = {
 };
 
 const scene = createScene();
+
+const clock = new THREE.Clock();
 
 const fishGroup = new THREE.Group();
 
@@ -247,7 +251,8 @@ document.getElementById('info-panel').classList.add('hidden');
 }
 
 function updateAllFish() {
-  fishGroup.children.forEach(updateFish);
+  const delta = clock.getDelta();
+  fishGroup.children.forEach(fish => updateFish(fish, delta));
 }
 
 let lastTime = performance.now();
