@@ -114,6 +114,8 @@ function addBasicLights() {
   const topLight = new THREE.DirectionalLight(0x88ccee, 1.0);
   topLight.position.set(0, 10, 0);
   scene.add(topLight);
+  window.aquariumLight = topLight;
+
 
   const sideLight = new THREE.DirectionalLight(0x336699, 0.3);
   sideLight.position.set(-5, 3, 2);
