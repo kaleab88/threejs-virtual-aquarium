@@ -1,8 +1,18 @@
 export function setupResize(camera, renderer) {
-  window.addEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+  function onResize() {
+    // Safety guard
+    if (!renderer || !camera) return;
+
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  });
+
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // performance cap
+  }
+
+  window.addEventListener("resize", onResize);
+  onResize(); // run once at start
 }
