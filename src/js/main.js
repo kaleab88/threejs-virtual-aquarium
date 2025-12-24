@@ -7,6 +7,8 @@ import { startLoop } from "../core/loop.js";
 import { setupResize } from "../utils/resize.js";
 import { createFish } from './fishFactory.js';
 import { createRock, createCoral } from './decorFactory.js';
+import { createBubbles } from "./effects.js";
+
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -182,6 +184,10 @@ scene.add(decorGroup);
 
 setupResize(camera, renderer);
 
+const bubbles = createBubbles(scene);
+window.bubbles = bubbles;
+
+
 window.addEventListener('click', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -234,14 +240,18 @@ document.getElementById('info-panel').classList.add('hidden');
 }
 
 
-
-function animate() {
-  requestAnimationFrame(animate);
-
+startLoop(renderer, scene, camera, () => {
   fishGroup.children.forEach(updateFish);
-
   controls.update();
-  renderer.render(scene, camera);
-}
+});
 
-animate();
+// function animate() {
+//   requestAnimationFrame(animate);
+
+//   fishGroup.children.forEach(updateFish);
+
+//   controls.update();
+//   renderer.render(scene, camera);
+// }
+
+// animate();
