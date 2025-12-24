@@ -1,6 +1,6 @@
 import * as THREE from "../../lib/three.module.js";
 
-export function createBubbles(scene, count = 40) {
+export function createBubbles(scene, count = 20) {
   const bubbles = [];
 
   const geometry = new THREE.SphereGeometry(0.03, 8, 8);

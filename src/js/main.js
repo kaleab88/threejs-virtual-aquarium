@@ -239,10 +239,30 @@ selectedFish = null;
 document.getElementById('info-panel').classList.add('hidden');
 }
 
+function updateAllFish() {
+  fishGroup.children.forEach(updateFish);
+}
+
+let lastTime = performance.now();
+let frames = 0;
+
+function showFPS() {
+  frames++;
+  const now = performance.now();
+  if (now - lastTime >= 1000) {
+    console.log("FPS:", frames);
+    frames = 0;
+    lastTime = now;
+  }
+}
+
+
+
 
 startLoop(renderer, scene, camera, () => {
-  fishGroup.children.forEach(updateFish);
+  updateAllFish();
   controls.update();
+  // showFPS();
 });
 
 // function animate() {
