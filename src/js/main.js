@@ -9,7 +9,7 @@ import { startLoop } from "../core/loop.js";
 import { setupResize } from "../utils/resize.js";
 import { createFish } from './fishFactory.js';
 import { createRock, createCoral } from './decorFactory.js';
-import { createBubbles } from "./effects.js";
+import { createBubbles} from "./effects.js"
 
 
 const raycaster = new THREE.Raycaster();
@@ -166,7 +166,8 @@ function createAquariumWalls() {
     opacity: 0.3,
     roughness: 0.1,
     metalness: 0.0,
-    side: THREE.DoubleSide
+    side: THREE.DoubleSide,
+    depthWrite: false // IMPORTANT: do not write to depth, prevents occlusion
   });
 
   const walls = [];
@@ -180,10 +181,12 @@ function createAquariumWalls() {
   const front = new THREE.Mesh(fbGeometry, material);
   front.position.z = AQUARIUM.depth / 2;
   front.position.y = 0;
+  front.renderOrder = 0; // draw early
 
   const back = front.clone();
   back.position.z = -AQUARIUM.depth / 2;
   back.rotation.y = Math.PI;
+  back.renderOrder = 0;
 
   // Left & Right
   const lrGeometry = new THREE.PlaneGeometry(
@@ -194,17 +197,21 @@ function createAquariumWalls() {
   const left = new THREE.Mesh(lrGeometry, material);
   left.position.x = -AQUARIUM.width / 2;
   left.rotation.y = Math.PI / 2;
+  left.renderOrder = 0;
 
   const right = left.clone();
   right.position.x = AQUARIUM.width / 2;
   right.rotation.y = -Math.PI / 2;
+  right.renderOrder = 0;
 
   walls.push(front, back, left, right);
   return walls;
 }
 
+
 const walls = createAquariumWalls();
 walls.forEach(wall => scene.add(wall));
+
 
 const decorGroup = new THREE.Group();
 
@@ -216,9 +223,9 @@ scene.add(decorGroup);
 
 setupResize(camera, renderer);
 
-const bubbles = createBubbles(scene);
+const bubbles = createBubbles(scene, 20, AQUARIUM);
 window.bubbles = bubbles;
-
+window.AQUARIUM = AQUARIUM;
 
 window.addEventListener('click', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -270,11 +277,7 @@ if (child.isMesh) child.material.emissive.setHex(0x000000);
 selectedFish = null;
 document.getElementById('info-panel').classList.add('hidden');
 }
-
-function updateAllFish() {
-  const delta = clock.getDelta();
-  fishGroup.children.forEach(fish => updateFish(fish, delta));
-}
+function updateAllFish(delta) { fishGroup.children.forEach(fish => updateFish(fish, delta)); }
 
 let lastTime = performance.now();
 let frames = 0;
@@ -292,11 +295,12 @@ function showFPS() {
 
 
 
-startLoop(renderer, scene, camera, () => {
-  updateAllFish();
-  controls.update();
-  // showFPS();
-});
+
+startLoop(renderer, scene, camera, () => { 
+    updateAllFish(clock.getDelta()); // fish still use delta 
+    // updateBubbles(bubbles, AQUARIUM); // bubbles use fixed increment 
+    controls.update();
+   });
 
 // function animate() {
 //   requestAnimationFrame(animate);
