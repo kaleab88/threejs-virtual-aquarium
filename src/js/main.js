@@ -95,6 +95,17 @@ if (child.isMesh) child.userData.selectable = true;
 });
 });
 
+// Coral palette and helper
+const coralColors = [0xff6666, 0xff9966, 0xcc66ff, 0xffcc66, 0xff7f50, 0xf4a460];
+
+function makeCoralMaterial() {
+  return new THREE.MeshStandardMaterial({
+    color: coralColors[Math.floor(Math.random() * coralColors.length)],
+    roughness: 0.8,
+    metalness: 0.1
+  });
+}
+
 
 
 function createAquariumFloor() {
@@ -103,18 +114,31 @@ function createAquariumFloor() {
     AQUARIUM.depth
   );
 
-  const material = new THREE.MeshStandardMaterial({
-    color: 0x2e8b57, // muted green
-    roughness: 0.9,
-    metalness: 0.0
-  });
+const textureLoader = new THREE.TextureLoader();
+const sandTexture = textureLoader.load("textures/sand.jpg");
+
+sandTexture.wrapS = sandTexture.wrapT = THREE.RepeatWrapping;
+sandTexture.repeat.set(4, 4);
+
+const material = new THREE.MeshStandardMaterial({
+  map: sandTexture,
+  roughness: 1.0,
+  metalness: 0.0
+});
+
+
 
   const floor = new THREE.Mesh(geometry, material);
+
+  // Rotate so it lies flat (PlaneGeometry is vertical by default)
   floor.rotation.x = -Math.PI / 2;
+
+  // Position at the bottom of the aquarium
   floor.position.y = -AQUARIUM.height / 2;
 
   return floor;
 }
+
 
 const camera = createCamera();
 const renderer = createRenderer();
@@ -142,16 +166,16 @@ const floor = createAquariumFloor();
 scene.add(floor);
 
 function addBasicLights() {
-  const ambientLight = new THREE.AmbientLight(0x1e3a5f, 0.4);
+  const ambientLight = new THREE.AmbientLight(0x446688, 0.8);
   scene.add(ambientLight);
 
-  const topLight = new THREE.DirectionalLight(0x88ccee, 1.0);
+  const topLight = new THREE.DirectionalLight(0x88ccee, 1.1);
   topLight.position.set(0, 10, 0);
   scene.add(topLight);
   window.aquariumLight = topLight;
 
 
-  const sideLight = new THREE.DirectionalLight(0x336699, 0.3);
+  const sideLight = new THREE.DirectionalLight(0x336699, 0.6);
   sideLight.position.set(-5, 3, 2);
   scene.add(sideLight);
 }
@@ -215,9 +239,9 @@ walls.forEach(wall => scene.add(wall));
 
 const decorGroup = new THREE.Group();
 
-decorGroup.add(createRock(new THREE.Vector3(-3, -2.8, 1)));
-decorGroup.add(createRock(new THREE.Vector3(3, -2.8, -2)));
-decorGroup.add(createCoral(new THREE.Vector3(0, -2.8, -3)));
+decorGroup.add(createRock(new THREE.Vector3(-3, -2.5, 1)));
+decorGroup.add(createRock(new THREE.Vector3(3, -2.5, -2)));
+decorGroup.add(createCoral(new THREE.Vector3(0, -2.6, -1)));
 
 scene.add(decorGroup);
 
