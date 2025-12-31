@@ -63,6 +63,23 @@ function updateFish(fish, delta) {
   fish.rotation.y += (targetAngle - fish.rotation.y) * 0.1;
 }
 
+function animateFish(fish, time) {
+  const data = fish.userData;
+
+  const swimSpeed = 4;
+  const wave = Math.sin(time * swimSpeed + data.swimOffset);
+
+  // Tail swing (primary motion)
+  data.tail.rotation.y = wave * 0.6;
+
+  // Body subtle wave
+  data.body.rotation.z = wave * 0.05;
+
+  // Fin flutter
+  data.fins.forEach((fin, i) => {
+    fin.rotation.z = Math.sin(time * 6 + i) * 0.15;
+  });
+}
 
 console.log('Main script loaded');
 
@@ -86,7 +103,10 @@ fish1.position.set(0, 0, 0);
 const fish2 = createFish({ color: 0xffcc00, scale: 0.8 });
 fish2.position.set(2, 1, -1);
 
-fishGroup.add(fish1, fish2);
+const fish3 = createFish({ color: 0x00ffff, scale: 0.9 });
+fish2.position.set(-1 , 0, 1);
+
+fishGroup.add(fish1, fish2, fish3);
 scene.add(fishGroup);
 
 fishGroup.children.forEach(fish => {
@@ -321,10 +341,16 @@ function showFPS() {
 
 
 startLoop(renderer, scene, camera, () => { 
-    updateAllFish(clock.getDelta()); // fish still use delta 
-    // updateBubbles(bubbles, AQUARIUM); // bubbles use fixed increment 
+    const delta = clock.getDelta();
+    updateAllFish(delta);
+
+    // Animate fish swimming motion
+    const time = performance.now() * 0.001;
+    fishGroup.children.forEach(fish => animateFish(fish, time));
+
     controls.update();
-   });
+});
+
 
 // function animate() {
 //   requestAnimationFrame(animate);
