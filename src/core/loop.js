@@ -3,11 +3,12 @@ export function startLoop(renderer, scene, camera, update) {
     requestAnimationFrame(animate);
     if (update) update();
 
-    // Subtle light animation
-    const time = Date.now() * 0.001;
-    if (window.aquariumLight) {
-      window.aquariumLight.intensity = 0.9 + Math.sin(time) * 0.1;
-    }
+    // Subtle underwater shimmer
+if (window.aquariumLight) {
+  const time = Date.now() * 0.001;
+  window.aquariumLight.intensity = 0.9 + Math.sin(time * 0.5) * 0.2;
+}
+
 
 // Bubble animation
 if (window.bubbles && window.AQUARIUM) {

@@ -4,14 +4,16 @@ import * as THREE from "../../lib/three.module.js";
 export function createBubbles(scene, count = 20, AQUARIUM) {
   const bubbles = [];
 
-  const geometry = new THREE.SphereGeometry(0.05, 12, 12); // small, natural size
-  const material = new THREE.MeshPhongMaterial({
-    color: 0x88ccff,
-    emissive: 0x88ccff,
-    transparent: true,
-    opacity: 0.6,
-    shininess: 80
-  });
+  const geometry = new THREE.SphereGeometry(0.05, 32, 32); // small, natural size
+  const material = new THREE.MeshPhysicalMaterial({
+  color: 0x88ccff,
+  transparent: true,
+  opacity: 0.4,
+  roughness: 0,
+  transmission: 1,   // glass-like transparency
+  thickness: 0.1     // gives refraction
+});
+
 
   const margin = 0.5;
 
