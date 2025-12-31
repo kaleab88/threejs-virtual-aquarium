@@ -81,6 +81,36 @@ function animateFish(fish, time) {
   });
 }
 
+function avoidCollisions(fish, allFish) {
+  const data = fish.userData;
+  const minDistance = 0.5; // how close before repelling
+
+  allFish.forEach(other => {
+    if (other === fish) return;
+
+    const dist = fish.position.distanceTo(other.position);
+    if (dist < minDistance) {
+      // Push fish away from each other
+      const away = new THREE.Vector3().subVectors(fish.position, other.position).normalize();
+      data.velocity.addScaledVector(away, 0.01);
+    }
+  });
+}
+
+function avoidObstacle(fish, obstacleMesh) {
+  const data = fish.userData;
+
+  const fishBox = new THREE.Box3().setFromObject(fish);
+  const obstacleBox = new THREE.Box3().setFromObject(obstacleMesh);
+
+  if (fishBox.intersectsBox(obstacleBox)) {
+    // Bounce fish away from obstacle
+    const away = new THREE.Vector3().subVectors(fish.position, obstacleMesh.position).normalize();
+    data.velocity.addScaledVector(away, 0.05);
+  }
+}
+
+
 console.log('Main script loaded');
 
 // Aquarium dimensions (world units)
@@ -91,7 +121,14 @@ const AQUARIUM = {
   wallThickness: 0.1
 };
 
+
 const scene = createScene();
+
+const middleBox = new THREE.Mesh(
+  new THREE.BoxGeometry(1, 1, 1),
+  new THREE.MeshStandardMaterial({ color: 0x888888 })
+);
+scene.add(middleBox);
 
 const clock = new THREE.Clock();
 
@@ -113,6 +150,8 @@ fishGroup.children.forEach(fish => {
 fish.traverse(child => {
 if (child.isMesh) child.userData.selectable = true;
 });
+avoidCollisions(fish, fishGroup.children);
+avoidObstacle(fish, middleBox);
 });
 
 // Coral palette and helper
