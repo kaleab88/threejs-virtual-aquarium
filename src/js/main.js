@@ -211,6 +211,8 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.5; // slow orbit
 camera.position.set(0, 3, 12);
 controls.target.set(0, 0, 0);
 controls.update();
@@ -392,6 +394,9 @@ startLoop(renderer, scene, camera, () => {
     fishGroup.children.forEach(fish => animateFish(fish, time));
 
     controls.update();
+    // Light shimmer effect
+window.aquariumLight.intensity = 1 + Math.sin(performance.now() * 0.001) * 0.1;
+
 });
 
 
