@@ -326,22 +326,31 @@ window.addEventListener('click', (event) => {
 });
 
 function updateInfoPanel(fish) {
-document.getElementById('fish-name').textContent = 'Fish';
-document.getElementById('fish-color').textContent = fish.children[0].material.color.getHexString();
-document.getElementById('fish-speed').textContent = fish.userData.speed.toFixed(2);
+  const data = fish.userData;
+  const pos = fish.position;
 
+  // ✅ True color from userData.baseColor
+  const colorHex = data.baseColor.toString(16).padStart(6, '0');
 
-document.getElementById('info-panel').classList.remove('hidden');
+  // ✅ Actual speed from velocity magnitude
+  const actualSpeed = data.velocity ? data.velocity.length() : 0;
+
+  document.getElementById('fish-name').textContent = `Fish #${fish.id}`;
+  document.getElementById('fish-color').textContent = colorHex;
+  document.getElementById('fish-speed').textContent = actualSpeed.toFixed(3);
+
+  const posEl = document.getElementById('fish-position');
+  if (posEl) {
+    posEl.textContent = `(${pos.x.toFixed(2)}, ${pos.y.toFixed(2)}, ${pos.z.toFixed(2)})`;
+  }
+
+  document.getElementById('info-panel').classList.remove('hidden');
 }
+
 
 function selectFish(fish) {
 clearSelection();
 selectedFish = fish;
-
-
-fish.traverse(child => {
-if (child.isMesh) child.material.emissive.setHex(0x333333);
-});
 
 
 updateInfoPanel(fish);
@@ -350,11 +359,6 @@ updateInfoPanel(fish);
 
 function clearSelection() {
 if (!selectedFish) return;
-
-
-selectedFish.traverse(child => {
-if (child.isMesh) child.material.emissive.setHex(0x000000);
-});
 
 
 selectedFish = null;

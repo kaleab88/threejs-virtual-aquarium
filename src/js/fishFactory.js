@@ -104,6 +104,7 @@ group.add(body);
      MOVEMENT DATA
      ===================== */
   group.userData = {
+    baseColor: color,
     velocity: new THREE.Vector3(
       (Math.random() - 0.5) * 0.02,
       (Math.random() - 0.5) * 0.01,
