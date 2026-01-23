@@ -275,14 +275,20 @@ scene.add(waterAmbient);
 
 
 function createAquariumWalls() {
-  const material = new THREE.MeshStandardMaterial({
-    color: 0x1e90ff,
+  // We upgrade to MeshPhysicalMaterial for realistic glass/water effects
+  const material = new THREE.MeshPhysicalMaterial({
+    color: 0x00aaff,      // A slightly brighter, tropical water blue
     transparent: true,
-    opacity: 0.3,
-    roughness: 0.1,
-    metalness: 0.0,
+    opacity: 0.15,        // Lowered from 0.3 to let your new lights shine through
+    
+    // Physical properties
+    transmission: 0.9,    // This makes it look like clear glass/water
+    roughness: 0.05,      // Very smooth surface for sharp highlights
+    thickness: 0.5,       // Simulates the thickness of the glass
+    
+    // Your existing important settings
     side: THREE.DoubleSide,
-    depthWrite: false // IMPORTANT: do not write to depth, prevents occlusion
+    depthWrite: false     // Keeps the transparency sorting stable
   });
 
   const walls = [];
