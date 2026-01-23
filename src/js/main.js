@@ -260,6 +260,16 @@ sunLight.shadow.mapSize.width = 1024;
 sunLight.shadow.mapSize.height = 1024;
 
 const waterAmbient = new THREE.AmbientLight(0x1e4fd8, 0.6);
+
+// Color: A pale, sky blue (0x88aaff) to contrast with the deep blue ambient
+// Intensity: 1.2
+const sideFill = new THREE.DirectionalLight(0x88aaff, 1.2);
+
+// Position it to the side (5), above (5), and slightly in front (2)
+sideFill.position.set(5, 5, 2); 
+
+// Add it to the scene
+scene.add(sideFill);
 scene.add(waterAmbient);
 
 
