@@ -246,7 +246,7 @@ function addBasicLights() {
 addBasicLights();
 
 // 5.2.1 Create the Sunlight
-const sunLight = new THREE.DirectionalLight(0xffffff,1.0);
+const sunLight = new THREE.DirectionalLight(0xffffff,0.5);
 sunLight.position.set(0, 10, 0); // Directly above the tank
 scene.add(sunLight);
 
