@@ -1,7 +1,7 @@
 import * as THREE from "../../lib/three.module.js";
 
 // Create bubbles at the bottom of the aquarium
-export function createBubbles(scene, count = 20, AQUARIUM) {
+export function createBubbles(scene, count = 30, AQUARIUM) {
   // FALLBACK: If AQUARIUM is undefined, use these default dimensions
   const tank = AQUARIUM || { width: 10, height: 10, depth: 10 };
   
