@@ -245,6 +245,19 @@ function addBasicLights() {
 
 addBasicLights();
 
+// 5.2.1 Create the Sunlight
+const sunLight = new THREE.DirectionalLight(0xffffff,1.0);
+sunLight.position.set(0, 10, 0); // Directly above the tank
+scene.add(sunLight);
+
+// 5.2.2 Set the Target to the center of the tank
+sunLight.target.position.set(0, 0, 0);
+scene.add(sunLight.target);
+
+// 5.2.3 Optional: Enable shadows if your hardware can handle it
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.width = 1024;
+sunLight.shadow.mapSize.height = 1024;
 
 function createAquariumWalls() {
   const material = new THREE.MeshStandardMaterial({
