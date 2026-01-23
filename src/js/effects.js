@@ -2,6 +2,9 @@ import * as THREE from "../../lib/three.module.js";
 
 // Create bubbles at the bottom of the aquarium
 export function createBubbles(scene, count = 20, AQUARIUM) {
+  // FALLBACK: If AQUARIUM is undefined, use these default dimensions
+  const tank = AQUARIUM || { width: 10, height: 10, depth: 10 };
+  
   const bubbles = [];
 
   const geometry = new THREE.SphereGeometry(0.05, 32, 32); // small, natural size
@@ -22,9 +25,9 @@ export function createBubbles(scene, count = 20, AQUARIUM) {
     bubble.renderOrder = 2;
 
     bubble.position.set(
-      (Math.random() - 0.5) * AQUARIUM.width * 0.8,
-      -AQUARIUM.height / 2 + margin,
-      (Math.random() - 0.5) * AQUARIUM.depth * 0.8
+      (Math.random() - 0.5) * tank.width * 0.8,
+      -tank.height / 2 + margin,
+      (Math.random() - 0.5) * tank.depth * 0.8
     );
 
     // IMPORTANT: use direct properties (the loop expects these)

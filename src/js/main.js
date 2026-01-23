@@ -209,6 +209,7 @@ const material = new THREE.MeshStandardMaterial({
 const camera = createCamera();
 const renderer = createRenderer();
 
+
 // Renderer performance & color management
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.physicallyCorrectLights = true;
@@ -401,7 +402,7 @@ function updateAllFish(delta) {
       avoidObstacle(fish, obstacle);
     });
     // Bubble trail 
-    attachBubbleTrail(fish, scene);
+    attachBubbleTrail(fish, scene, AQUARIUM);
   });
 }
 
