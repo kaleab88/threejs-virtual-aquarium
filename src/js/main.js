@@ -104,9 +104,15 @@ function avoidObstacle(fish, obstacleMesh) {
   const obstacleBox = new THREE.Box3().setFromObject(obstacleMesh);
 
   if (fishBox.intersectsBox(obstacleBox)) {
-    // Bounce fish away from obstacle
+    // Compute direction away from obstacle
     const away = new THREE.Vector3().subVectors(fish.position, obstacleMesh.position).normalize();
-    data.velocity.addScaledVector(away, 0.05);
+
+    // Preserve current speed but redirect direction
+    const currentSpeed = data.velocity.length() || 0.02; // ensure non-zero speed
+    data.velocity.copy(away.multiplyScalar(currentSpeed));
+
+    // ✅ Optional escape logic: nudge fish outside obstacle
+    fish.position.add(away.multiplyScalar(0.1));
   }
 }
 
@@ -135,13 +141,14 @@ const clock = new THREE.Clock();
 const fishGroup = new THREE.Group();
 
 const fish1 = createFish({ color: 0x4da6ff, scale: 1 });
-fish1.position.set(0, 0, 0);
+fish1.position.set(-3, 0, 0); 
 
 const fish2 = createFish({ color: 0xffcc00, scale: 0.8 });
-fish2.position.set(2, 1, -1);
+fish2.position.set(2, 1, -1); 
 
 const fish3 = createFish({ color: 0x00ffff, scale: 0.9 });
-fish2.position.set(-1 , 0, 1);
+fish3.position.set(1, -1, 2); 
+
 
 fishGroup.add(fish1, fish2, fish3);
 scene.add(fishGroup);
@@ -366,7 +373,38 @@ if (!selectedFish) return;
 selectedFish = null;
 document.getElementById('info-panel').classList.add('hidden');
 }
-function updateAllFish(delta) { fishGroup.children.forEach(fish => updateFish(fish, delta)); }
+
+
+function attachBubbleTrail(fish, scene, AQUARIUM) {
+  if (Math.random() < 0.02) {
+    const bubbles = createBubbles(scene, 1, AQUARIUM);
+    const bubble = bubbles[0];
+    bubble.position.copy(fish.position);
+
+    // Add to global array so startLoop animates it
+    if (!window.bubbles) window.bubbles = [];
+    window.bubbles.push(bubble);
+  }
+}
+
+
+
+function updateAllFish(delta) {
+  fishGroup.children.forEach(fish => {
+    updateFish(fish, delta);
+
+    // Check collisions with middle box
+    avoidObstacle(fish, middleBox);
+
+    // Check collisions with decor (rocks, corals)
+    decorGroup.children.forEach(obstacle => {
+      avoidObstacle(fish, obstacle);
+    });
+    // Bubble trail 
+    attachBubbleTrail(fish, scene);
+  });
+}
+
 
 let lastTime = performance.now();
 let frames = 0;
