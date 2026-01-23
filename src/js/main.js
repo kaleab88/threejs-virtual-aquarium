@@ -259,6 +259,11 @@ sunLight.castShadow = true;
 sunLight.shadow.mapSize.width = 1024;
 sunLight.shadow.mapSize.height = 1024;
 
+const waterAmbient = new THREE.AmbientLight(0x1e4fd8, 0.6);
+scene.add(waterAmbient);
+
+
+
 function createAquariumWalls() {
   const material = new THREE.MeshStandardMaterial({
     color: 0x1e90ff,
