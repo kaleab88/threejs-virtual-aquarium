@@ -11,11 +11,12 @@ const bodyGeometry = new THREE.SphereGeometry(0.5, 32, 32);
 const loader = new THREE.TextureLoader();
 
 // Default gradient
-let texturePath = 'textures/fish-gradient-blue-silver.png';
+let texturePath = 'public/textures/fish-gradient-blue-silver.png';
 
 // Choose gradient by color (you can expand these rules)
-if (color === 0xffff00) texturePath = 'textures/fish-gradient-blue-silver.png';
-if (color === 0x00ffff) texturePath = 'textures/fish-gradient-teal-golden.png';
+if (color === 0xffff00) texturePath = 'public/textures/fish-gradient-blue-silver.png';
+if (color === 0x00ffff) texturePath = 'public/textures/fish-gradient-teal-golden.png';
+
 
 const gradientTexture = loader.load(texturePath);
 gradientTexture.rotation = Math.PI / 2;

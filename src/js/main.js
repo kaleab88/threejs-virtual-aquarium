@@ -180,32 +180,26 @@ function createAquariumFloor() {
     AQUARIUM.depth
   );
 
-const textureLoader = new THREE.TextureLoader();
-const sandTexture = textureLoader.load("textures/sand.jpg");
-
-sandTexture.wrapS = sandTexture.wrapT = THREE.RepeatWrapping;
-sandTexture.repeat.set(4, 4);
-
-const material = new THREE.MeshStandardMaterial({
-  map: sandTexture,
-  roughness: 1.0,
-  metalness: 0.0
-});
-
-
+  // We use MeshStandardMaterial with a 'color' instead of a 'map'
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xd2b48c,  // A warm, sandy tan hex color
+    roughness: 1.0,    // Perfectly matte (like sand)
+    metalness: 0.0     // No metallic reflection
+  });
 
   const floor = new THREE.Mesh(geometry, material);
 
-  // Rotate so it lies flat (PlaneGeometry is vertical by default)
+  // Rotate so it lies flat
   floor.rotation.x = -Math.PI / 2;
 
   // Position at the bottom of the aquarium
   floor.position.y = -AQUARIUM.height / 2;
 
+  // This ensures the floor can receive shadows from the sun we are about to add
+  floor.receiveShadow = true;
+
   return floor;
 }
-
-
 const camera = createCamera();
 const renderer = createRenderer();
 
