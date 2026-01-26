@@ -1,6 +1,6 @@
 import * as THREE from '../../lib/three.module.js';
 
-export function createFish({ color = 0x4da6ff, scale = 1 }) {
+export function createFish({ color = 0xff8844, scale = 1 }) {
   const group = new THREE.Group();
 
  /* ======================
@@ -25,12 +25,19 @@ gradientTexture.wrapS = THREE.RepeatWrapping;
 gradientTexture.wrapT = THREE.RepeatWrapping;
 gradientTexture.repeat.set(2, 1);
 
+// Optimized for Visibility + Fog + Realism
 const bodyMaterial = new THREE.MeshStandardMaterial({
-  map: gradientTexture,
-  roughness: 0.5,
-  metalness: 0.2,
-  emissive: new THREE.Color(color).multiplyScalar(0.05)
+  map: gradientTexture,    // Keep your texture
+  color: color,            // Ensure the base color is applied
+  roughness: 0.4,          // Slightly smoother for better highlights
+  metalness: 0.15,         // Subtle scale-like sheen
+  
+  // THE FIX: Higher emissive values to cut through the fog
+  emissive: new THREE.Color(color).multiplyScalar(0.12), 
+  emissiveIntensity: 0.8
 });
+
+bodyMaterial.color.offsetHSL(0.02, 0.1, 0.05);
 
 const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
 body.scale.set(1.4, 0.8, 0.6);

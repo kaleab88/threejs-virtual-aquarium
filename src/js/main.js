@@ -8,10 +8,10 @@ import { createRenderer } from "../core/renderer.js";
 import { startLoop } from "../core/loop.js";
 import { setupResize } from "../utils/resize.js";
 import { createFish } from './fishFactory.js';
-import { createRock, createCoral } from './decorFactory.js';
+import { createRock, createCoral, createSeaweed, updateSeaweed } from './decorFactory.js';
 import { createBubbles} from "./effects.js"
 
-
+const textureLoader = new THREE.TextureLoader();
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let selectedFish = null;
@@ -97,22 +97,40 @@ function avoidCollisions(fish, allFish) {
   });
 }
 
-function avoidObstacle(fish, obstacleMesh) {
+function avoidObstacle(fish) {
   const data = fish.userData;
+  
+  // Define the 'safe zone' (Aquarium dimensions / 2 - buffer)
+  const limitX = 9.5; 
+  const limitY = 4.5;
+  const limitZ = 4.5;
 
-  const fishBox = new THREE.Box3().setFromObject(fish);
-  const obstacleBox = new THREE.Box3().setFromObject(obstacleMesh);
+  // Create a vector to store the 'push back' force
+  const pushBack = new THREE.Vector3(0, 0, 0);
 
-  if (fishBox.intersectsBox(obstacleBox)) {
-    // Compute direction away from obstacle
-    const away = new THREE.Vector3().subVectors(fish.position, obstacleMesh.position).normalize();
+  // Check X boundaries (Left/Right)
+  if (Math.abs(fish.position.x) > limitX) {
+    pushBack.x = -fish.position.x; 
+  }
+  // Check Y boundaries (Top/Bottom)
+  if (Math.abs(fish.position.y) > limitY) {
+    pushBack.y = -fish.position.y;
+  }
+  // Check Z boundaries (Front/Back)
+  if (Math.abs(fish.position.z) > limitZ) {
+    pushBack.z = -fish.position.z;
+  }
 
-    // Preserve current speed but redirect direction
-    const currentSpeed = data.velocity.length() || 0.02; // ensure non-zero speed
-    data.velocity.copy(away.multiplyScalar(currentSpeed));
-
-    // ✅ Optional escape logic: nudge fish outside obstacle
-    fish.position.add(away.multiplyScalar(0.1));
+  // If the fish is out of bounds, redirect its velocity
+  if (pushBack.length() > 0) {
+    pushBack.normalize();
+    const currentSpeed = data.velocity.length() || 0.02;
+    
+    // Redirect velocity toward the center of the tank
+    data.velocity.copy(pushBack.multiplyScalar(currentSpeed));
+    
+    // Nudge the fish slightly back inside (your 'escape logic')
+    fish.position.add(pushBack.multiplyScalar(0.1));
   }
 }
 
@@ -129,12 +147,31 @@ const AQUARIUM = {
 
 
 const scene = createScene();
+scene.fog = new THREE.Fog(0x0b3d91, 5, 18);
 
-const middleBox = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshStandardMaterial({ color: 0x888888 })
-);
-scene.add(middleBox);
+
+const seaweedList = [];
+
+// Calculate the floor level based on your constant
+const floorLevel = -AQUARIUM.height / 2;
+
+// Increase to 40-50 for a "lush" grass look
+for (let i = 0; i < 20; i++) {
+  const x = (Math.random() - 0.5) * (AQUARIUM.width - 2); 
+  const z = (Math.random() - 0.5) * (AQUARIUM.depth - 2);   
+  const y = -AQUARIUM.height / 2; 
+
+  const blade = createSeaweed(new THREE.Vector3(x, y, z));
+  scene.add(blade);
+  seaweedList.push(blade);
+}
+
+// const middleBox = new THREE.Mesh(
+//   new THREE.BoxGeometry(1, 1, 1),
+//   new THREE.MeshStandardMaterial({ color: 0x888888 })
+// );
+// middleBox.visible = false;
+// scene.add(middleBox);
 
 const clock = new THREE.Clock();
 
@@ -158,7 +195,7 @@ fish.traverse(child => {
 if (child.isMesh) child.userData.selectable = true;
 });
 avoidCollisions(fish, fishGroup.children);
-avoidObstacle(fish, middleBox);
+avoidObstacle(fish);
 });
 
 // Coral palette and helper
@@ -175,27 +212,24 @@ function makeCoralMaterial() {
 
 
 function createAquariumFloor() {
-  const geometry = new THREE.PlaneGeometry(
-    AQUARIUM.width,
-    AQUARIUM.depth
-  );
+  const geometry = new THREE.PlaneGeometry(AQUARIUM.width, AQUARIUM.depth);
 
-  // We use MeshStandardMaterial with a 'color' instead of a 'map'
+  // Load the sand texture
+  const sandTexture = textureLoader.load('public/textures/sand.png');
+
+  // Set wrapping so the texture tiles
+  sandTexture.wrapS = sandTexture.wrapT = THREE.RepeatWrapping;
+  sandTexture.repeat.set(4, 4); // Adjust this to make the sand finer or coarser
+
   const material = new THREE.MeshStandardMaterial({
-    color: 0xd2b48c,  // A warm, sandy tan hex color
-    roughness: 1.0,    // Perfectly matte (like sand)
-    metalness: 0.0     // No metallic reflection
+    map: sandTexture,
+    roughness: 1.0,
+    metalness: 0.0
   });
 
   const floor = new THREE.Mesh(geometry, material);
-
-  // Rotate so it lies flat
   floor.rotation.x = -Math.PI / 2;
-
-  // Position at the bottom of the aquarium
   floor.position.y = -AQUARIUM.height / 2;
-
-  // This ensures the floor can receive shadows from the sun we are about to add
   floor.receiveShadow = true;
 
   return floor;
@@ -219,11 +253,7 @@ camera.position.set(0, 3, 12);
 controls.target.set(0, 0, 0);
 controls.update();
 
-const cube = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshStandardMaterial({ color: 0xcccccc })
-);
-scene.add(cube);
+
 
 const floor = createAquariumFloor();
 scene.add(floor);
@@ -423,7 +453,7 @@ function updateAllFish(delta) {
     updateFish(fish, delta);
 
     // Check collisions with middle box
-    avoidObstacle(fish, middleBox);
+    avoidObstacle(fish);
 
     // Check collisions with decor (rocks, corals)
     decorGroup.children.forEach(obstacle => {
@@ -460,6 +490,10 @@ startLoop(renderer, scene, camera, () => {
     const time = performance.now() * 0.001;
     fishGroup.children.forEach(fish => animateFish(fish, time));
 
+    const elapsedTime = clock.getElapsedTime();
+
+    // Animate the seaweed list
+    updateSeaweed(seaweedList, elapsedTime);
     controls.update();
     // Light shimmer effect
 window.aquariumLight.intensity = 1 + Math.sin(performance.now() * 0.001) * 0.1;
