@@ -500,6 +500,38 @@ window.aquariumLight.intensity = 1 + Math.sin(performance.now() * 0.001) * 0.1;
 
 });
 
+window.addEventListener('keydown', (e) => {
+  const key = e.key.toLowerCase();
+
+  // 'L' to toggle Lights
+  if (key === 'l' && window.aquariumLight) {
+    window.aquariumLight.visible = !window.aquariumLight.visible;
+  }
+
+  // 'F' to Increase Speed (Fast)
+  if (key === 'f') {
+    fishGroup.children.forEach(fish => {
+      fish.userData.velocity.multiplyScalar(1.5); // Increase by 50% each click
+    });
+  }
+
+  // 'S' to Decrease Speed (Slow)
+  if (key === 's') {
+    fishGroup.children.forEach(fish => {
+      fish.userData.velocity.multiplyScalar(0.7); // Decrease by 30% each click
+    });
+  }
+
+  // 'R' to Reset to Default Speed
+  if (key === 'r') {
+    fishGroup.children.forEach(fish => {
+      // Normalize the direction, then apply the base speed (e.g., 0.02)
+      const currentDir = fish.userData.velocity.clone().normalize();
+      fish.userData.velocity.copy(currentDir.multiplyScalar(0.02)); 
+    });
+    console.log("Speed Reset to Default");
+  }
+});
 
 // function animate() {
 //   requestAnimationFrame(animate);
